@@ -1,0 +1,31 @@
+{
+  "name": "ts-rust",
+  "version": "1.0.0",
+  "description": "Simple implementation Rust language features for learning purpose",
+  "main": "index.js",
+  "files": [
+    "lib/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test:once": "jest --config jestconfig.json",
+    "test:watch": "jest --watchAll --config jestconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eduard-aminov/ts-rust.git"
+  },
+  "keywords": [],
+  "author": "Eduard Aminov <eduard.aminov.160@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eduard-aminov/ts-rust/issues"
+  },
+  "homepage": "https://github.com/eduard-aminov/ts-rust#readme",
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.3",
+    "typescript": "^4.5.5"
+  }
+}
