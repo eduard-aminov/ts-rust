@@ -1,5 +1,5 @@
-import { match } from '../match';
-import { isPresent } from '../utils';
+import { match } from './match';
+import { isPresent } from './utils';
 
 type Some<T> = OptionImpl<T>;
 

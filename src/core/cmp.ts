@@ -1,4 +1,4 @@
-import { None, Option } from './option/option';
+import { None, Option } from './option';
 import { match } from './match';
 
 export interface PartialEq<Rhs extends PartialEq<any>> {

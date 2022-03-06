@@ -1,4 +1,4 @@
-import { None, Option, Some } from '../core/option/option';
+import { None, Option, Some } from '../core/option';
 
 describe('Option', () => {
     describe('isSome', () => {
