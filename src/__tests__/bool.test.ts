@@ -11,4 +11,9 @@ describe('bool', () => {
         expect(bool(false).then(() => 0)).toEqual(None())
         expect(bool(true).then(() => 0)).toEqual(Some(0))
     })
+
+    test('default', () => {
+        expect(bool(true).default()).toEqual(bool(false));
+        expect(bool(false).default()).toEqual(bool(false));
+    })
 })
