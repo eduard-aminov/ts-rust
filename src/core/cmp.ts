@@ -1,10 +1,11 @@
 import { None, Option } from './option';
 import { match } from './match';
+import { bool } from './primitives/bool';
 
 export interface PartialEq<Rhs extends PartialEq<any>> {
-    eq(other: Rhs): boolean;
+    eq(other: Rhs): bool;
 
-    ne(other: Rhs): boolean;
+    ne(other: Rhs): bool;
 }
 
 export interface Eq<Self extends Eq<any>> extends PartialEq<Self> {
@@ -24,13 +25,13 @@ export interface Ord<Self extends Ord<any>> extends Eq<Self>, PartialOrd<Self> {
 export interface PartialOrd<Rhs extends PartialOrd<any>> extends PartialEq<Rhs> {
     partialCmp(other: Rhs): Option<Less | Equal | Greater>;
 
-    lt(other: Rhs): boolean;
+    lt(other: Rhs): bool;
 
-    le(other: Rhs): boolean;
+    le(other: Rhs): bool;
 
-    gt(other: Rhs): boolean;
+    gt(other: Rhs): bool;
 
-    ge(other: Rhs): boolean;
+    ge(other: Rhs): bool;
 }
 
 enum OrderingType {
@@ -43,28 +44,28 @@ class OrderingImpl implements Eq<OrderingImpl>, Ord<OrderingImpl>, PartialOrd<Or
 
     constructor(private type: OrderingType) {}
 
-    isEq(): boolean {
-        return this.type === OrderingType.Equal;
+    isEq(): bool {
+        return bool(this.type === OrderingType.Equal);
     }
 
-    isNe(): boolean {
-        return this.type !== OrderingType.Equal;
+    isNe(): bool {
+        return bool(this.type !== OrderingType.Equal);
     }
 
-    isLt(): boolean {
-        return this.type === OrderingType.Less;
+    isLt(): bool {
+        return bool(this.type === OrderingType.Less);
     }
 
-    isGt(): boolean {
-        return this.type === OrderingType.Greater;
+    isGt(): bool {
+        return bool(this.type === OrderingType.Greater);
     }
 
-    isLe(): boolean {
-        return this.type !== OrderingType.Greater;
+    isLe(): bool {
+        return bool(this.type !== OrderingType.Greater);
     }
 
-    isGe(): boolean {
-        return this.type !== OrderingType.Less;
+    isGe(): bool {
+        return bool(this.type !== OrderingType.Less);
     }
 
     reverse(): Less | Equal | Greater {
@@ -108,24 +109,24 @@ class OrderingImpl implements Eq<OrderingImpl>, Ord<OrderingImpl>, PartialOrd<Or
         }
     }
 
-    eq(other: Less | Equal | Greater): boolean {
-        return this.type === getOrderingType(other);
+    eq(other: Less | Equal | Greater): bool {
+        return bool(this.type === getOrderingType(other));
     }
 
-    ge(other: Less | Equal | Greater): boolean {
-        return this.type >= getOrderingType(other);
+    ge(other: Less | Equal | Greater): bool {
+        return bool(this.type >= getOrderingType(other));
     }
 
-    gt(other: Less | Equal | Greater): boolean {
-        return this.type > getOrderingType(other);
+    gt(other: Less | Equal | Greater): bool {
+        return bool(this.type > getOrderingType(other));
     }
 
-    le(other: Less | Equal | Greater): boolean {
-        return this.type <= getOrderingType(other);
+    le(other: Less | Equal | Greater): bool {
+        return bool(this.type <= getOrderingType(other));
     }
 
-    lt(other: Less | Equal | Greater): boolean {
-        return this.type < getOrderingType(other);
+    lt(other: Less | Equal | Greater): bool {
+        return bool(this.type < getOrderingType(other));
     }
 
     max(other: Less | Equal | Greater): Less | Equal | Greater {
@@ -136,8 +137,8 @@ class OrderingImpl implements Eq<OrderingImpl>, Ord<OrderingImpl>, PartialOrd<Or
         return minBy(this, other, this.cmp.bind(this));
     }
 
-    ne(other: Less | Equal | Greater): boolean {
-        return false;
+    ne(other: Less | Equal | Greater): bool {
+        return bool(false);
     }
 
     partialCmp(other: Less | Equal | Greater): Option<Less | Equal | Greater> {
@@ -145,16 +146,14 @@ class OrderingImpl implements Eq<OrderingImpl>, Ord<OrderingImpl>, PartialOrd<Or
     }
 }
 
-class Less extends OrderingImpl {}
-
-class Equal extends OrderingImpl {}
-
-class Greater extends OrderingImpl {}
+export type Less = OrderingImpl;
+export type Equal = OrderingImpl;
+export type Greater = OrderingImpl;
 
 export class Ordering {
-    static Less = new Less(OrderingType.Less);
-    static Equal = new Equal(OrderingType.Equal);
-    static Greater = new Greater(OrderingType.Greater);
+    static Less = new OrderingImpl(OrderingType.Less);
+    static Equal = new OrderingImpl(OrderingType.Equal);
+    static Greater = new OrderingImpl(OrderingType.Greater);
 }
 
 export function min<T extends Ord<any>>(v1: T, v2: T): T {
@@ -202,9 +201,9 @@ export function maxByKey<T,
 function getOrderingType(other: OrderingImpl): OrderingType {
     let otherWeight: OrderingType = 0;
 
-    if (other.isLt()) {
+    if (other.isLt().valueOf()) {
         otherWeight = -1;
-    } else if (other.isGt()) {
+    } else if (other.isGt().valueOf()) {
         otherWeight = 1;
     }
 

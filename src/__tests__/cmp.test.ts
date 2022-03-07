@@ -1,4 +1,5 @@
 import { Ordering, PartialEq } from '../core/cmp';
+import { bool } from '../core/primitives/bool';
 
 describe('PartialEq', () => {
 
@@ -14,12 +15,12 @@ describe('PartialEq', () => {
             public format: BookFormat,
         ) {}
 
-        eq(other: Book): boolean {
-            return this.isbn === other.isbn;
+        eq(other: Book): bool {
+            return bool(this.isbn === other.isbn);
         }
 
-        ne(other: Book): boolean {
-            return this.isbn !== other.isbn;
+        ne(other: Book): bool {
+            return bool(this.isbn !== other.isbn);
         }
     }
 
@@ -28,58 +29,58 @@ describe('PartialEq', () => {
     const b3 = new Book(10, BookFormat.Paperback);
 
     test('should equal', () => {
-        expect(b1.eq(b2)).toBeTruthy();
-        expect(b1.eq(b3)).toBeFalsy();
+        expect(b1.eq(b2)).toEqual(bool(true));
+        expect(b1.eq(b3)).toEqual(bool(false));
     });
 
     test('should not be equal', () => {
-        expect(b1.ne(b3)).toBeTruthy();
-        expect(b1.ne(b2)).toBeFalsy();
+        expect(b1.ne(b3)).toEqual(bool(true));
+        expect(b1.ne(b2)).toEqual(bool(false));
     });
 });
 
 describe('Ordering', () => {
     test('isEq', () => {
-        expect(Ordering.Less.isEq()).toEqual(false);
-        expect(Ordering.Equal.isEq()).toEqual(true);
-        expect(Ordering.Greater.isEq()).toEqual(false);
-    })
+        expect(Ordering.Less.isEq()).toEqual(bool(false));
+        expect(Ordering.Equal.isEq()).toEqual(bool(true));
+        expect(Ordering.Greater.isEq()).toEqual(bool(false));
+    });
 
     test('isNe', () => {
-        expect(Ordering.Less.isNe()).toEqual(true);
-        expect(Ordering.Equal.isNe()).toEqual(false);
-        expect(Ordering.Greater.isNe()).toEqual(true);
-    })
+        expect(Ordering.Less.isNe()).toEqual(bool(true));
+        expect(Ordering.Equal.isNe()).toEqual(bool(false));
+        expect(Ordering.Greater.isNe()).toEqual(bool(true));
+    });
 
     test('isLt', () => {
-        expect(Ordering.Less.isLt()).toEqual(true);
-        expect(Ordering.Equal.isLt()).toEqual(false);
-        expect(Ordering.Greater.isLt()).toEqual(false);
-    })
+        expect(Ordering.Less.isLt()).toEqual(bool(true));
+        expect(Ordering.Equal.isLt()).toEqual(bool(false));
+        expect(Ordering.Greater.isLt()).toEqual(bool(false));
+    });
 
     test('isGt', () => {
-        expect(Ordering.Less.isGt()).toEqual(false);
-        expect(Ordering.Equal.isGt()).toEqual(false);
-        expect(Ordering.Greater.isGt()).toEqual(true);
-    })
+        expect(Ordering.Less.isGt()).toEqual(bool(false));
+        expect(Ordering.Equal.isGt()).toEqual(bool(false));
+        expect(Ordering.Greater.isGt()).toEqual(bool(true));
+    });
 
     test('isLe', () => {
-        expect(Ordering.Less.isLe()).toEqual(true);
-        expect(Ordering.Equal.isLe()).toEqual(true);
-        expect(Ordering.Greater.isLe()).toEqual(false);
-    })
+        expect(Ordering.Less.isLe()).toEqual(bool(true));
+        expect(Ordering.Equal.isLe()).toEqual(bool(true));
+        expect(Ordering.Greater.isLe()).toEqual(bool(false));
+    });
 
     test('isGe', () => {
-        expect(Ordering.Less.isGe()).toEqual(false);
-        expect(Ordering.Equal.isGe()).toEqual(true);
-        expect(Ordering.Greater.isGe()).toEqual(true);
-    })
+        expect(Ordering.Less.isGe()).toEqual(bool(false));
+        expect(Ordering.Equal.isGe()).toEqual(bool(true));
+        expect(Ordering.Greater.isGe()).toEqual(bool(true));
+    });
 
     test('reverse', () => {
         expect(Ordering.Less.reverse()).toEqual(Ordering.Greater);
         expect(Ordering.Equal.reverse()).toEqual(Ordering.Equal);
         expect(Ordering.Greater.reverse()).toEqual(Ordering.Less);
-    })
+    });
 
     test('then', () => {
         const result1 = Ordering.Equal.then(Ordering.Less);
@@ -91,7 +92,7 @@ describe('Ordering', () => {
         expect(result2).toEqual(Ordering.Less);
         expect(result3).toEqual(Ordering.Less);
         expect(result4).toEqual(Ordering.Equal);
-    })
+    });
 
     test('thenWith', () => {
         const result1 = Ordering.Equal.thenWith(() => Ordering.Less);
@@ -103,5 +104,5 @@ describe('Ordering', () => {
         expect(result2).toEqual(Ordering.Less);
         expect(result3).toEqual(Ordering.Less);
         expect(result4).toEqual(Ordering.Equal);
-    })
-})
+    });
+});
