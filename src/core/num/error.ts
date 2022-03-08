@@ -10,3 +10,9 @@ export function _validateNumRange(
         throw new Error(`the value ${value} does not fit into the type \`${type}\` whose range is \`${min}..=${max}\``);
     }
 }
+
+export function _validateUnsigned(value: number): void {
+    if (Math.sign(value) === -1) {
+        throw new Error('unsigned values cannot be negated');
+    }
+}

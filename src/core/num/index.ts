@@ -1,3 +1,4 @@
 export enum _NumType {
-    I32 = 'i32'
+    U32 = 'i32',
+    I32 = 'i32',
 }
