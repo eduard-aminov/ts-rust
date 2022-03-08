@@ -2,6 +2,8 @@ import { i32 } from '../core/num/i32';
 import { u32 } from '../core/num/u32';
 import { u8 } from '../core/num/u8';
 import { i8 } from '../core/num/i8';
+import { i16 } from '../core/num/i16';
+import { u16 } from '../core/num/u16';
 
 describe('i32', () => {
     test('range validation', () => {
@@ -70,6 +72,41 @@ describe('u8', () => {
 
     test('MAX', () => {
         expect(u8().MAX.value).toEqual(127);
+    });
+});
+
+describe('i16', () => {
+    test('range validation', () => {
+        expect(() => i16(-32769)).toThrow();
+        expect(() => i16(32768)).toThrow();
+        expect(i16(5).value).toEqual(5);
+    });
+
+    test('MIN', () => {
+        expect(i16().MIN.value).toEqual(-32768);
+    });
+
+    test('MAX', () => {
+        expect(i16().MAX.value).toEqual(32767);
+    });
+});
+
+describe('u16', () => {
+    test('sign validation', () => {
+        expect(() => u16(-1)).toThrow();
+    });
+
+    test('range validation', () => {
+        expect(() => u16(32768)).toThrow();
+        expect(u16(5).value).toEqual(5);
+    });
+
+    test('MIN', () => {
+        expect(u16().MIN.value).toEqual(0);
+    });
+
+    test('MAX', () => {
+        expect(u16().MAX.value).toEqual(32767);
     });
 });
 
