@@ -48,11 +48,11 @@ describe('i8', () => {
     });
 
     test('MIN', () => {
-        expect(i8().MIN.value).toEqual(-128);
+        expect(i8.MIN.value).toEqual(-128);
     });
 
     test('MAX', () => {
-        expect(i8().MAX.value).toEqual(127);
+        expect(i8.MAX.value).toEqual(127);
     });
 });
 

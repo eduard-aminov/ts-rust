@@ -1,5 +1,6 @@
 import { _validateNumRange, _validateUnsigned } from './error';
 import { _NumType } from './index';
+import { withStaticProperties } from '../utils';
 
 interface U8 {
     value: number;
@@ -26,17 +27,10 @@ class U8 {
     }
 }
 
-export const u8 = function (value: number): U8 {
-    return new U8(value);
-} as U8Constructor;
-
-Object.defineProperties(u8, {
-    MIN: {
-        value: new U8(MIN),
-        writable: false,
-    },
-    MAX: {
-        value: new U8(MAX),
-        writable: false,
-    },
-});
+export const u8 = withStaticProperties(
+    (value: number): U8 => new U8(value),
+    {
+        MIN: new U8(MIN),
+        MAX: new U8(MAX),
+    }
+) as U8Constructor;
