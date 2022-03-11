@@ -1,6 +1,6 @@
 import { _validateNumRange, _validateUnsigned } from './error';
 import { _NumType } from './index';
-import { withStaticProperties } from '../utils';
+import { _withStaticProperties } from '../utils';
 
 interface U8 {
     value: number;
@@ -27,7 +27,7 @@ class U8 {
     }
 }
 
-export const u8 = withStaticProperties(
+export const u8 = _withStaticProperties(
     (value: number): U8 => new U8(value),
     {
         MIN: new U8(MIN),

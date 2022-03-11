@@ -13,11 +13,11 @@ describe('i32', () => {
     });
 
     test('MIN', () => {
-        expect(i32().MIN.value).toEqual(-2147483648);
+        expect(i32.MIN.value).toEqual(-2147483648);
     });
 
     test('MAX', () => {
-        expect(i32().MAX.value).toEqual(2147483647);
+        expect(i32.MAX.value).toEqual(2147483647);
     });
 });
 
@@ -32,11 +32,11 @@ describe('u32', () => {
     });
 
     test('MIN', () => {
-        expect(u32().MIN.value).toEqual(0);
+        expect(u32.MIN.value).toEqual(0);
     });
 
     test('MAX', () => {
-        expect(u32().MAX.value).toEqual(2147483647);
+        expect(u32.MAX.value).toEqual(2147483647);
     });
 });
 
@@ -83,11 +83,11 @@ describe('i16', () => {
     });
 
     test('MIN', () => {
-        expect(i16().MIN.value).toEqual(-32768);
+        expect(i16.MIN.value).toEqual(-32768);
     });
 
     test('MAX', () => {
-        expect(i16().MAX.value).toEqual(32767);
+        expect(i16.MAX.value).toEqual(32767);
     });
 });
 
@@ -102,11 +102,11 @@ describe('u16', () => {
     });
 
     test('MIN', () => {
-        expect(u16().MIN.value).toEqual(0);
+        expect(u16.MIN.value).toEqual(0);
     });
 
     test('MAX', () => {
-        expect(u16().MAX.value).toEqual(32767);
+        expect(u16.MAX.value).toEqual(32767);
     });
 });
 

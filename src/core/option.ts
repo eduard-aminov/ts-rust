@@ -1,5 +1,5 @@
 import { match } from './match';
-import { isPresent } from './utils';
+import { _isPresent } from './utils';
 
 type Some<T> = OptionImpl<T>;
 
@@ -180,7 +180,7 @@ class OptionImpl<T> {
     }
 
     private resolveAndSetType(value: T | undefined) {
-        this._type = match(isPresent(value))
+        this._type = match(_isPresent(value))
             .case(true, OptionType.Some)
             .default(OptionType.None);
     }

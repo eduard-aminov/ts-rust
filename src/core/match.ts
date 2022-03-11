@@ -1,4 +1,4 @@
-import { isPresent } from './utils';
+import { _isPresent } from './utils';
 
 type Fn<T> = (arg: T) => unknown;
 
@@ -9,7 +9,7 @@ class Case<T> {
     ) {}
 
     case<U>(compareValue: T | Fn<T>, result: U | Fn<T>): Case<T> {
-        if (isPresent(this.result)) {
+        if (_isPresent(this.result)) {
             return this;
         } else if (compareValue === this.value) {
             if (result instanceof Function) {
@@ -21,7 +21,7 @@ class Case<T> {
     }
 
     default<D>(defaultValue: D): any {
-        if (isPresent(this.result)) {
+        if (_isPresent(this.result)) {
             return this.result;
         }
         if (defaultValue instanceof Function) {

@@ -1,31 +1,36 @@
-import { isPresent } from '../utils';
+import { _withStaticProperties } from '../utils';
 import { _validateNumRange, _validateUnsigned } from './error';
 import { _NumType } from './index';
+
+interface U32 {
+    value: number;
+}
+
+interface U32Constructor {
+    new(value: number): U32;
+
+    (value: number): U32;
+
+    readonly MIN: U32;
+    readonly MAX: U32;
+}
 
 const MIN = 0;
 const MAX = 2147483647;
 
-class StaticU32 {
-    readonly MIN = new U32(MIN);
-    readonly MAX = new U32(MAX);
-}
-
 class U32 {
     constructor(
-        public value: number,
+        public value: number
     ) {
         _validateUnsigned(value);
         _validateNumRange(_NumType.U32, value, MIN, MAX);
     }
 }
 
-export type u32 = U32;
-
-export function u32(): StaticU32;
-export function u32(value: number): U32;
-export function u32(value?: any): any {
-    if (isPresent(value)) {
-        return new U32(value!);
+export const u32 = _withStaticProperties(
+    (value: number): U32 => new U32(value),
+    {
+        MIN: new U32(MIN),
+        MAX: new U32(MAX),
     }
-    return new StaticU32();
-}
+) as U32Constructor;

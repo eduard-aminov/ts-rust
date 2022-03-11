@@ -1,30 +1,36 @@
-import { isPresent } from '../utils';
 import { _validateNumRange } from './error';
 import { _NumType } from './index';
+import { _withStaticProperties } from '../utils';
+
+interface I32 {
+    value: number;
+}
+
+interface I32Constructor {
+    new(value: number): I32;
+
+    (value: number): I32;
+
+    readonly MIN: I32;
+    readonly MAX: I32;
+}
 
 const MIN = -2147483648;
 const MAX = 2147483647;
 
-class StaticI32 {
-    readonly MIN = new I32(MIN);
-    readonly MAX = new I32(MAX);
-}
-
 class I32 {
     constructor(
-        public value: number,
+        public value: number
     ) {
         _validateNumRange(_NumType.I32, value, MIN, MAX);
     }
 }
 
-export type i32 = I32;
-
-export function i32(): StaticI32;
-export function i32(value: number): I32;
-export function i32(value?: any): any {
-    if (isPresent(value)) {
-        return new I32(value!);
+export const i32 = _withStaticProperties(
+    (value: number): I32 => new I32(value),
+    {
+        MIN: new I32(MIN),
+        MAX: new I32(MAX),
     }
-    return new StaticI32();
-}
+) as I32Constructor;
+

@@ -1,4 +1,4 @@
-import { withStaticProperties } from '../utils';
+import { _withStaticProperties } from '../utils';
 import { _validateNumRange } from './error';
 import { _NumType } from './index';
 
@@ -26,7 +26,7 @@ class I8 {
     }
 }
 
-export const i8 = withStaticProperties(
+export const i8 = _withStaticProperties(
     (value: number): I8 => new I8(value),
     {
         MIN: new I8(MIN),
