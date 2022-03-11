@@ -1,9 +1,9 @@
 import { i32 } from '../core/num/i32';
 import { u32 } from '../core/num/u32';
-import { u8 } from '../core/num/u8';
 import { i8 } from '../core/num/i8';
 import { i16 } from '../core/num/i16';
 import { u16 } from '../core/num/u16';
+import { u8 } from '../core/num/u8';
 
 describe('i32', () => {
     test('range validation', () => {
@@ -67,11 +67,11 @@ describe('u8', () => {
     });
 
     test('MIN', () => {
-        expect(u8().MIN.value).toEqual(0);
+        expect(u8.MIN.value).toEqual(0);
     });
 
     test('MAX', () => {
-        expect(u8().MAX.value).toEqual(127);
+        expect(u8.MAX.value).toEqual(127);
     });
 });
 
