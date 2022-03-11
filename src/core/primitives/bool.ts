@@ -3,10 +3,6 @@ import { Default } from '../default';
 import { BitAnd, BitOr, BitXor, Not } from '../ops/bit';
 import { Equal, Greater, Less, Ord, Ordering } from '../cmp';
 
-interface Bool {
-    value: boolean;
-}
-
 interface BoolConstructor {
     new(value: boolean): Bool;
 

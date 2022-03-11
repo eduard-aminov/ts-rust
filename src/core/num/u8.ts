@@ -27,6 +27,8 @@ class U8 {
     }
 }
 
+export type u8 = U8;
+
 export const u8 = _withStaticProperties(
     (value: number): U8 => new U8(value),
     {
