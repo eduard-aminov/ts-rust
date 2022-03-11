@@ -3,22 +3,36 @@ import { Default } from '../default';
 import { BitAnd, BitOr, BitXor, Not } from '../ops/bit';
 import { Equal, Greater, Less, Ord, Ordering } from '../cmp';
 
-class Bool extends Boolean implements Default<bool>,
+interface Bool {
+    value: boolean;
+}
+
+interface BoolConstructor {
+    new(value: boolean): Bool;
+
+    (value: boolean): Bool;
+}
+
+class Bool implements Default<Bool>,
     BitAnd<bool>,
     BitOr<bool>,
     BitXor<bool>,
     Not<bool>,
     Ord<bool> {
 
+    constructor(
+        public value: boolean,
+    ) {}
+
     thenSome<T>(value: T): Option<T> {
-        if (this.valueOf()) {
+        if (this.value) {
             return Some(value);
         }
         return None();
     }
 
     then<T, F extends () => T>(fn: F): Option<T> {
-        if (this.valueOf()) {
+        if (this.value) {
             return Some(fn());
         }
         return None();
@@ -29,30 +43,30 @@ class Bool extends Boolean implements Default<bool>,
     }
 
     bitand(rhs: bool): bool {
-        return bool(Boolean(+this.valueOf() & +rhs.valueOf()));
+        return bool(Boolean(+this.value & +rhs.value));
     }
 
     bitor(rhs: bool): bool {
-        return bool(Boolean(+this.valueOf() | +rhs.valueOf()));
+        return bool(Boolean(+this.value | +rhs.value));
     }
 
     bitxor(rhs: Bool): Bool {
-        return bool(Boolean(+this.valueOf() ^ +rhs.valueOf()));
+        return bool(Boolean(+this.value ^ +rhs.value));
     }
 
     not(): bool {
-        return bool(!this.valueOf());
+        return bool(!this.value);
     }
 
     clamp(min: bool, max: bool): bool {
-        const minBit = +min.valueOf();
-        const maxBit = +max.valueOf();
+        const minBit = +min.value;
+        const maxBit = +max.value;
 
         if (minBit > maxBit) {
             throw new Error('Min greater than Max');
         }
 
-        const selfBit = +this.valueOf();
+        const selfBit = +this.value;
 
         if (selfBit < minBit) {
             return min;
@@ -63,9 +77,9 @@ class Bool extends Boolean implements Default<bool>,
     }
 
     cmp(other: bool): Less | Equal | Greater {
-        if (this.lt(other).valueOf()) {
+        if (this.lt(other).value) {
             return Ordering.Less;
-        } else if (this.gt(other).valueOf()) {
+        } else if (this.gt(other).value) {
             return Ordering.Greater;
         } else {
             return Ordering.Equal;
@@ -73,35 +87,35 @@ class Bool extends Boolean implements Default<bool>,
     }
 
     eq(other: bool): bool {
-        return bool(+this.valueOf() === +other.valueOf());
+        return bool(+this.value === +other.value);
     }
 
     ge(other: bool): bool {
-        return bool(+this.valueOf() >= +other.valueOf());
+        return bool(+this.value >= +other.value);
     }
 
     gt(other: bool): bool {
-        return bool(+this.valueOf() > +other.valueOf());
+        return bool(+this.value > +other.value);
     }
 
     le(other: bool): bool {
-        return bool(+this.valueOf() <= +other.valueOf());
+        return bool(+this.value <= +other.value);
     }
 
     lt(other: bool): bool {
-        return bool(+this.valueOf() < +other.valueOf());
+        return bool(+this.value < +other.value);
     }
 
     max(other: bool): bool {
-        return this.gt(other).valueOf() ? this : other;
+        return this.gt(other).value ? this : other;
     }
 
     min(other: bool): bool {
-        return this.lt(other).valueOf() ? this : other;
+        return this.lt(other).value ? this : other;
     }
 
     ne(other: bool): bool {
-        return bool(+this.valueOf() !== +other.valueOf());
+        return bool(+this.value !== +other.value);
     }
 
     partialCmp(other: bool): Option<Less | Equal | Greater> {
@@ -111,6 +125,6 @@ class Bool extends Boolean implements Default<bool>,
 
 export type bool = Bool;
 
-export function bool(value: boolean): bool {
+export const bool = function (value: boolean): bool {
     return new Bool(value);
-}
+} as BoolConstructor;
