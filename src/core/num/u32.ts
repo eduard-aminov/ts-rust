@@ -27,6 +27,8 @@ class U32 {
     }
 }
 
+export type u32 = U32;
+
 export const u32 = _withStaticProperties(
     (value: number): U32 => new U32(value),
     {

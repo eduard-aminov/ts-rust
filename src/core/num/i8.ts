@@ -2,10 +2,6 @@ import { _withStaticProperties } from '../utils';
 import { _validateNumRange } from './error';
 import { _NumType } from './index';
 
-interface I8 {
-    value: number;
-}
-
 interface I8Constructor {
     new(value: number): I8;
 
@@ -25,6 +21,8 @@ class I8 {
         _validateNumRange(_NumType.I8, value, MIN, MAX);
     }
 }
+
+export type i8 = I8;
 
 export const i8 = _withStaticProperties(
     (value: number): I8 => new I8(value),

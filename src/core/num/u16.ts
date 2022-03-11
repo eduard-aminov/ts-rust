@@ -2,10 +2,6 @@ import { _withStaticProperties } from '../utils';
 import { _validateNumRange, _validateUnsigned } from './error';
 import { _NumType } from './index';
 
-interface U16 {
-    value: number;
-}
-
 interface U16Constructor {
     new(value: number): U16;
 
@@ -26,6 +22,8 @@ class U16 {
         _validateNumRange(_NumType.U16, value, MIN, MAX);
     }
 }
+
+export type u16 = U16;
 
 export const u16 = _withStaticProperties(
     (value: number): U16 => new U16(value),

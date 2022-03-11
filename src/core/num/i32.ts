@@ -2,10 +2,6 @@ import { _validateNumRange } from './error';
 import { _NumType } from './index';
 import { _withStaticProperties } from '../utils';
 
-interface I32 {
-    value: number;
-}
-
 interface I32Constructor {
     new(value: number): I32;
 
@@ -25,6 +21,8 @@ class I32 {
         _validateNumRange(_NumType.I32, value, MIN, MAX);
     }
 }
+
+export type i32 = I32;
 
 export const i32 = _withStaticProperties(
     (value: number): I32 => new I32(value),
