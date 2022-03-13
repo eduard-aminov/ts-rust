@@ -1,4 +1,4 @@
-import { _NumType } from './index';
+import { _NumType } from './utils';
 
 export function _validateNumRange(
     type: _NumType,

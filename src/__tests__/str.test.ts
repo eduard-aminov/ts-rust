@@ -1,5 +1,4 @@
-import { str } from '../core/str/str';
-import { u8 } from '../core/num/u8';
+import { str, u8 } from '../core';
 
 describe('str', () => {
     test('asBytes', () => {

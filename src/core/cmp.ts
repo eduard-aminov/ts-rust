@@ -1,6 +1,6 @@
 import { None, Option } from './option';
 import { match } from './match';
-import { bool } from './primitives/bool';
+import { bool } from './primitives';
 
 export interface PartialEq<Rhs extends PartialEq<any>> {
     eq(other: Rhs): bool;

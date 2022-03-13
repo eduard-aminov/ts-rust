@@ -1,4 +1,4 @@
-import { u8 } from '../num/u8';
+import { u8 } from '../num';
 
 interface StrConstructor {
     new(value: string): Str;

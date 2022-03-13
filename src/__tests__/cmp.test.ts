@@ -1,5 +1,4 @@
-import { Ordering, PartialEq } from '../core/cmp';
-import { bool } from '../core/primitives/bool';
+import { bool, Ordering, PartialEq } from '../core';
 
 describe('PartialEq', () => {
 

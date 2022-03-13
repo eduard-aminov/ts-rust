@@ -1,6 +1,6 @@
-import { _withStaticProperties } from '../utils';
+import { withStaticProperties } from '../utils';
 import { _validateNumRange, _validateUnsigned } from './error';
-import { _NumType } from './index';
+import { _NumType } from './utils';
 
 interface U32 {
     value: number;
@@ -29,7 +29,7 @@ class U32 {
 
 export type u32 = U32;
 
-export const u32 = _withStaticProperties(
+export const u32 = withStaticProperties(
     (value: number): U32 => new U32(value),
     {
         MIN: new U32(MIN),

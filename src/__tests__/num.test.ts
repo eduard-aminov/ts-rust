@@ -1,9 +1,4 @@
-import { i32 } from '../core/num/i32';
-import { u32 } from '../core/num/u32';
-import { i8 } from '../core/num/i8';
-import { i16 } from '../core/num/i16';
-import { u16 } from '../core/num/u16';
-import { u8 } from '../core/num/u8';
+import { i16, i32, i8, u16, u32, u8 } from '../core';
 
 describe('i32', () => {
     test('range validation', () => {

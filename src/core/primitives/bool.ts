@@ -1,6 +1,6 @@
 import { None, Option, Some } from '../option';
 import { Default } from '../default';
-import { BitAnd, BitOr, BitXor, Not } from '../ops/bit';
+import { BitAnd, BitOr, BitXor, Not } from '../ops';
 import { Equal, Greater, Less, Ord, Ordering } from '../cmp';
 
 interface BoolConstructor {

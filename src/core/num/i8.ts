@@ -1,6 +1,6 @@
-import { _withStaticProperties } from '../utils';
 import { _validateNumRange } from './error';
-import { _NumType } from './index';
+import { _NumType } from './utils';
+import { withStaticProperties } from '../utils';
 
 interface I8Constructor {
     new(value: number): I8;
@@ -24,7 +24,7 @@ class I8 {
 
 export type i8 = I8;
 
-export const i8 = _withStaticProperties(
+export const i8 = withStaticProperties(
     (value: number): I8 => new I8(value),
     {
         MIN: new I8(MIN),
