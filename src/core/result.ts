@@ -44,6 +44,13 @@ export class ResultImpl<T = any, E = any> {
             .case(Err(_), Some(this._value))
             .default(None());
     }
+
+    map<U>(fn: (arg: T | E) => U): Result<U, E> {
+        return match(this)
+            .case(Ok(_), (x: T) => Ok(fn(x)))
+            .case(Err(_), (x: E) => Err(fn(x)))
+            .default();
+    }
 }
 
 export class OkImpl<T> extends ResultImpl<T> {
