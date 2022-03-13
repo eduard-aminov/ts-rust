@@ -10,7 +10,3 @@ export * from './num';
 export * from './ops';
 export * from './primitives';
 export * from './str';
-
-export interface Unwrapped<T> {
-    unwrap(): T;
-}
