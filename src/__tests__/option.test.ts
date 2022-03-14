@@ -105,6 +105,13 @@ describe('Option', () => {
         expect(y.okOr(0)).toEqual(Err(0));
     });
 
+    test('okOrElse', () => {
+        const x = Some('foo');
+        const y = None();
+
+        expect(x.okOrElse(() => 0)).toEqual(Ok('foo'));
+        expect(y.okOrElse(() => 0)).toEqual(Err(0));
+    });
 
     test('and', () => {
         const x = Some(42);

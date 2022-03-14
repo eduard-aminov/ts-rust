@@ -96,6 +96,12 @@ export class OptionImpl<T = any> {
             .default(Err(err));
     }
 
+    okOrElse<E>(fn: () => E): Result<T, E> {
+        return match(this)
+            .case(Some(_), x => Ok(x))
+            .default(Err(fn()));
+    }
+
     and(optb: Option<T>): Option<T> {
         return match(this)
             .case(Some(_), optb)
