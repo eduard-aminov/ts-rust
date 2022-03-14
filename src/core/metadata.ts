@@ -4,10 +4,6 @@ export interface Metadata {
     type: OptionTypeMetadata | ResultTypeMetadata;
 }
 
-export interface WithMetadata {
-    readonly __metadata__: Metadata
-}
-
 export enum OptionTypeMetadata {
     Some = '__option_some__',
     None = '__option_none__',

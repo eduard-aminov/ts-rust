@@ -40,45 +40,45 @@ export class OptionImpl<T = any> {
 
     expect(msg: string): T | never {
         return match(this)
-            .case(Some(_), this._value)
+            .case(Some(_), x => x)
             .case(None(), () => { throw new Error(msg); })
             .default();
     }
 
     unwrap(): T {
         return match(this)
-            .case(Some(_), this._value)
+            .case(Some(_), x => x)
             .case(None(), () => { throw new Error('called `Option.unwrap()` on a `None` value'); })
             .default();
     }
 
     unwrapOr(defaultValue: T): T {
         return match(this)
-            .case(Some(_), this._value)
+            .case(Some(_), x => x)
             .default(defaultValue);
     }
 
     unwrapOrElse(fn: () => T): T {
         return match(this)
-            .case(Some(_), this._value)
+            .case(Some(_), x => x)
             .default(fn());
     }
 
     map<U>(fn: (arg: T) => U): Option<U> {
         return match(this)
-            .case(Some(_), () => Some(fn(this._value)))
+            .case(Some(_), x => Some(fn(x)))
             .default(None());
     }
 
     mapOr<U>(defaultValue: U, fn: (arg: T) => U): U {
         return match(this)
-            .case(Some(_), () => fn(this._value))
+            .case(Some(_), x => fn(x))
             .default(defaultValue);
     }
 
     mapOrElse<U>(defaultFn: () => U, fn: (arg: T) => U): U {
         return match(this)
-            .case(Some(_), () => fn(this._value))
+            .case(Some(_), x => fn(x))
             .default(defaultFn());
     }
 
@@ -90,19 +90,19 @@ export class OptionImpl<T = any> {
 
     andThen(fn: (arg: T) => Option<T>): Option<T> {
         return match(this)
-            .case(Some(_), fn(this._value))
+            .case(Some(_), x => fn(x))
             .default(None());
     }
 
     or(optb: Option<T>): Option<T> {
         return match(this)
-            .case(Some(_), Some(this._value))
+            .case(Some(_), x => Some(x))
             .default(optb);
     }
 
     orElse(fn: () => Option<T>): Option<T> {
         return match(this)
-            .case(Some(_), Some(this._value))
+            .case(Some(_), x => Some(x))
             .default(fn());
     }
 
