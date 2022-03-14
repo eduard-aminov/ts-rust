@@ -2,6 +2,7 @@ import { Metadata, OptionTypeMetadata } from './metadata';
 import { bool } from './primitives';
 import { _, isPresent, withStaticProperties } from './utils';
 import { match } from './match';
+import { Err, Ok, Result } from './result';
 
 export interface SomeCtor {
     new<T>(value: T): Option<T>;
@@ -87,6 +88,12 @@ export class OptionImpl<T = any> {
         return match(this)
             .case(Some(_), x => fn(x))
             .default(defaultFn());
+    }
+
+    okOr<E>(err: E): Result<T, E> {
+        return match(this)
+            .case(Some(_), x => Ok(x))
+            .default(Err(err));
     }
 
     and(optb: Option<T>): Option<T> {

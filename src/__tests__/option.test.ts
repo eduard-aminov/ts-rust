@@ -1,4 +1,4 @@
-import { bool, None, Option, Some } from '../core';
+import { bool, Err, None, Ok, Option, Some } from '../core';
 
 describe('Option', () => {
 
@@ -96,6 +96,15 @@ describe('Option', () => {
         expect(x.mapOrElse(() => 2 * k, s => s.length)).toEqual(12);
         expect(y.mapOrElse(() => 2 * k, s => s.length)).toEqual(42);
     });
+
+    test('okOr', () => {
+        const x = Some('foo');
+        const y = None();
+
+        expect(x.okOr(0)).toEqual(Ok('foo'));
+        expect(y.okOr(0)).toEqual(Err(0));
+    });
+
 
     test('and', () => {
         const x = Some(42);
