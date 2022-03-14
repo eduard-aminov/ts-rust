@@ -4,12 +4,12 @@ import { BitAnd, BitOr, BitXor, Not } from '../ops';
 import { Equal, Greater, Less, Ord, Ordering } from '../cmp';
 
 interface BoolConstructor {
-    new(value: boolean): Bool;
+    new(value: boolean): BoolImpl;
 
-    (value: boolean): Bool;
+    (value: boolean): BoolImpl;
 }
 
-class Bool implements Default<Bool>,
+class BoolImpl implements Default<BoolImpl>,
     BitAnd<bool>,
     BitOr<bool>,
     BitXor<bool>,
@@ -46,7 +46,7 @@ class Bool implements Default<Bool>,
         return bool(Boolean(+this.value | +rhs.value));
     }
 
-    bitxor(rhs: Bool): Bool {
+    bitxor(rhs: BoolImpl): BoolImpl {
         return bool(Boolean(+this.value ^ +rhs.value));
     }
 
@@ -119,8 +119,8 @@ class Bool implements Default<Bool>,
     }
 }
 
-export type bool = Bool;
+export type bool = BoolImpl;
 
 export const bool = function (value: boolean): bool {
-    return new Bool(value);
+    return new BoolImpl(value);
 } as BoolConstructor;
