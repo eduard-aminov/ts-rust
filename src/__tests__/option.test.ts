@@ -60,6 +60,18 @@ describe('Option', () => {
         expect(y.unwrapOrElse(() => k + k)).toEqual(200);
     });
 
+    xtest('inspect', () => {
+        const logSpy = jest.spyOn(console, 'log');
+        const x = Some(42);
+        const y = None();
+
+        x.inspect(x => console.log(`Got ${x}`))
+        y.inspect(x => console.log(`Got ${x}`))
+
+        expect(logSpy).toHaveBeenCalledWith('Got 42');
+        expect(logSpy).toHaveBeenCalledTimes(1);
+    });
+
     test('map', () => {
         const x = Some('Hello World!');
         const y = None();

@@ -64,6 +64,13 @@ export class OptionImpl<T = any> {
             .default(fn());
     }
 
+    inspect(fn: (arg: T) => void): this {
+        if (this.isSome().value) {
+            fn(this._value);
+        }
+        return this;
+    }
+
     map<U>(fn: (arg: T) => U): Option<U> {
         return match(this)
             .case(Some(_), x => Some(fn(x)))
