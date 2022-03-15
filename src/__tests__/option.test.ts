@@ -65,8 +65,8 @@ describe('Option', () => {
         const x = Some(42);
         const y = None();
 
-        x.inspect(x => console.log(`Got ${x}`))
-        y.inspect(x => console.log(`Got ${x}`))
+        x.inspect(x => console.log(`Got ${x}`));
+        y.inspect(x => console.log(`Got ${x}`));
 
         expect(logSpy).toHaveBeenCalledWith('Got 42');
         expect(logSpy).toHaveBeenCalledTimes(1);
@@ -159,36 +159,6 @@ describe('Option', () => {
         expect(y.orElse(vikings)).toEqual(Some('vikings'));
         expect(y.orElse(nobody)).toEqual(None());
     });
-
-    // describe('xor', () => {
-    //     test('Some ^ None returns Some', () => {
-    //         const x = Some(42);
-    //         const y = None();
-    //
-    //         expect(x.xor(y)).toEqual(x);
-    //     });
-    //
-    //     test('None ^ Some returns Some', () => {
-    //         const x = None();
-    //         const y = Some(42);
-    //
-    //         expect(x.xor(y)).toEqual(y);
-    //     });
-    //
-    //     test('Some ^ Some returns None', () => {
-    //         const x = Some(42);
-    //         const y = Some(100);
-    //
-    //         expect(x.xor(y)).toEqual(None());
-    //     });
-    //
-    //     test('None ^ None returns None', () => {
-    //         const x = None();
-    //         const y = None();
-    //
-    //         expect(x.xor(y)).toEqual(x);
-    //     });
-    // });
 
     test('filter', () => {
         const isEven = (n: number) => n % 2 === 0;

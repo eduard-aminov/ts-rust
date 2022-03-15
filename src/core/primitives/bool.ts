@@ -119,8 +119,10 @@ class BoolImpl implements Default<BoolImpl>,
     }
 }
 
+function factory(value: boolean): bool {
+    return new BoolImpl(value);
+}
+
 export type bool = BoolImpl;
 
-export const bool = function (value: boolean): bool {
-    return new BoolImpl(value);
-} as BoolConstructor;
+export const bool = factory as BoolConstructor;

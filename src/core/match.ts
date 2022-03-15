@@ -1,7 +1,7 @@
-import { Option, SomeImpl } from './option';
-import { _, EmptyPlaceholder, isPresent, isValueOption, isValueResult } from './utils';
+import { isValueOption, Option, SomeImpl } from './option';
+import { _, EmptyPlaceholder, isPresent } from './utils';
 import { compareMetadataByKey, hasMetadata } from './metadata';
-import { Result, ResultImpl } from './result';
+import { isValueResult, Result, ResultImpl } from './result';
 
 type Fn<T> = (arg: T) => unknown;
 

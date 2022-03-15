@@ -2,7 +2,7 @@ import { _, withStaticProperties } from './utils';
 import { match } from './match';
 import { bool } from './primitives';
 import { None, Option, Some } from './option';
-import { Metadata, ResultTypeMetadata } from './metadata';
+import { hasMetadata, Metadata, readMetadata, ResultTypeMetadata } from './metadata';
 
 export interface OkCtor {
     new<T>(value: T): Result<T>;
@@ -84,3 +84,24 @@ export const Err = withStaticProperties(
         }
     }
 ) as ErrCtor;
+
+export const isValueOk = (value: unknown): value is OkImpl<any> => {
+    if (hasMetadata(value)) {
+        return readMetadata(value).type === ResultTypeMetadata.Ok;
+    }
+    return false;
+};
+
+export const isValueErr = (value: unknown): value is ErrImpl<any> => {
+    if (hasMetadata(value)) {
+        return readMetadata(value).type === ResultTypeMetadata.Err;
+    }
+    return false;
+};
+
+export const isValueResult = (value: unknown): value is ResultImpl => {
+    if (hasMetadata(value)) {
+        return isValueOk(value) || isValueErr(value);
+    }
+    return false;
+};

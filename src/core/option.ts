@@ -1,6 +1,6 @@
-import { Metadata, OptionTypeMetadata } from './metadata';
+import { hasMetadata, Metadata, OptionTypeMetadata, readMetadata } from './metadata';
 import { bool } from './primitives';
-import { _, isPresent, withStaticProperties } from './utils';
+import { _, isPresent } from './utils';
 import { match } from './match';
 import { Err, Ok, Result } from './result';
 
@@ -11,17 +11,15 @@ export interface SomeCtor {
 }
 
 export interface NoneCtor {
-    new(): Option;
+    new(): Option<any>;
 
-    (): Option;
+    (): Option<any>;
 }
-
-export type OptionCtor = SomeCtor | NoneCtor;
 
 export class OptionImpl<T = any> {
     constructor(
-        private _value: T,
-        private __metadata__: Metadata,
+        protected _value: T,
+        protected __metadata__: Metadata,
     ) {
     }
 
@@ -126,14 +124,6 @@ export class OptionImpl<T = any> {
             .default(fn());
     }
 
-    // xor(optb: Option<T>): Option<T> {
-    //     return match([this, optb])
-    //         .case([Some(_), None()], (([a]) => Some(a.unwrap())))
-    //         .case([None(), Some(_)], (([_, b]) => Some(b.unwrap())))
-    //         .default(None());
-    // }
-    //
-
     filter(predicate: (arg: T) => boolean): Option<T> {
         if (this.isNone().value) {
             return None();
@@ -227,22 +217,37 @@ export class NoneImpl extends OptionImpl {
     }
 }
 
-export type Option<T = any> = OptionImpl<T>;
+export type Option<T> = OptionImpl<T>;
 
-export const Some = withStaticProperties(
-    <T>(value: T): Option<T> => new SomeImpl(value),
-    {
-        __metadata__: {
-            type: OptionTypeMetadata.Some,
-        }
+function factory<T>(value: T): Option<T>;
+function factory<T, E>(value?: any): any {
+    if (!isPresent(value)) {
+        return new NoneImpl();
+    } else {
+        return new SomeImpl<T>(value);
     }
-) as SomeCtor;
+}
 
-export const None = withStaticProperties(
-    (): Option => new NoneImpl(),
-    {
-        __metadata__: {
-            type: OptionTypeMetadata.None,
-        }
+export const Some = factory as SomeCtor;
+export const None = factory as NoneCtor;
+
+export const isValueSome = (value: unknown): value is SomeImpl<any> => {
+    if (hasMetadata(value)) {
+        return readMetadata(value).type === OptionTypeMetadata.Some;
     }
-) as NoneCtor;
+    return false;
+};
+
+export const isValueNone = (value: unknown): value is NoneImpl => {
+    if (hasMetadata(value)) {
+        return readMetadata(value).type === OptionTypeMetadata.None;
+    }
+    return false;
+};
+
+export const isValueOption = (value: unknown): value is OptionImpl => {
+    if (hasMetadata(value)) {
+        return isValueSome(value) || isValueNone(value);
+    }
+    return false;
+};
