@@ -1,4 +1,4 @@
-import { _, withStaticProperties } from './utils';
+import { _ } from './utils';
 import { match } from './match';
 import { bool } from './primitives';
 import { None, Option, Some } from './option';
@@ -67,23 +67,16 @@ export class ErrImpl<E> extends ResultImpl<any, E> {
 
 export type Result<T = any, E = any> = ResultImpl<T, E>;
 
-export const Ok = withStaticProperties(
-    <T, E>(value: T): Result<T, E> => new OkImpl<T>(value),
-    {
-        __metadata__: {
-            type: ResultTypeMetadata.Ok,
-        }
-    }
-) as OkCtor;
+function okFactory<T>(value: T): OkImpl<T> {
+    return new OkImpl<T>(value);
+}
 
-export const Err = withStaticProperties(
-    <T, E>(value: E): Result<T, E> => new ErrImpl<E>(value),
-    {
-        __metadata__: {
-            type: ResultTypeMetadata.Err,
-        }
-    }
-) as ErrCtor;
+function errFactory<T>(value: T): ErrImpl<T> {
+    return new ErrImpl<T>(value);
+}
+
+export const Ok = okFactory as OkCtor;
+export const Err = errFactory as ErrCtor;
 
 export const isValueOk = (value: unknown): value is OkImpl<any> => {
     if (hasMetadata(value)) {
