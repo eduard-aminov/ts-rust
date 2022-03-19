@@ -1,3 +1,5 @@
+export type Ctor<T = any> = new(...args: T[]) => any;
+
 export const _ = Symbol('__empty_placeholder__');
 
 export type EmptyPlaceholder = typeof _;
@@ -15,3 +17,7 @@ export const withStaticProperties = <F extends Function, P extends object>(fn: F
     );
     return fn;
 };
+
+export const hasCtor = <T>(value: T): value is T & { constructor: unknown } => isPresent((value as any)?.constructor);
+
+export const isClass = <T extends { toString: Function }>(fn: T) => /^\s*class/.test(fn.toString());

@@ -1,43 +1,87 @@
-import { isPresent } from './utils';
+import { Ctor, isPresent } from './utils';
+import { ErrImpl, OkImpl, ResultImpl } from './result';
+import { NoneImpl, OptionImpl, SomeImpl } from './option';
 
-type Ctor<T = any> = new(...args: T[]) => any;
-
-export function Metadata(metadata: Metadata): (ctor: Ctor) => void {
+export function DefineMetadata(metadata: MetadataProps): (ctor: Ctor) => void {
     return function (ctor: Ctor): void {
         ctor.prototype.__metadata__ = metadata;
     };
 }
 
-interface Metadata {
-    type: OptionTypeMetadata | ResultTypeMetadata;
+export interface MetadataProps {
+    type: MetadataType,
 }
 
-export enum OptionTypeMetadata {
+export enum MetadataType {
     Some = '__option_some__',
     None = '__option_none__',
-}
-
-export enum ResultTypeMetadata {
     Ok = '__result_ok__',
     Err = '__result_err__',
 }
 
-export const hasMetadata = <T>(value: T): boolean => {
-    return isPresent((value as any)?.__metadata__);
-};
+export class Metadata {
+    static hasMetadata<T>(value: T): value is T & { __metadata__: MetadataProps } {
+        return isPresent((value as any)?.__metadata__);
+    }
 
-export const readMetadata = <T>(from: T): Metadata => {
-    if (!hasMetadata(from)) {
+    static readFrom<T>(from: T): MetadataProps {
+        if (this.hasMetadata(from)) {
+            return from.__metadata__;
+        }
         throw new Error('Cannot read metadata');
     }
-    return (from as any)?.__metadata__;
-};
 
-export const compareMetadataByKey = (left: any, right: any, key: keyof Metadata): boolean => {
-    return readMetadata(left)[key] === readMetadata(right)[key];
-};
+    static setMetadata<T extends object>(instance: T, metadata: MetadataProps): void {
+        if (this.hasMetadata(instance)) {
+            instance.__metadata__ = metadata;
+        } else {
+            throw new Error('Value has not metadata');
+        }
+    }
 
-export const setMetadata = <T>(instance: T, metadata: Metadata) => {
-    (instance as any).__metadata__ = metadata;
-};
+    static compareWithByKey<L, R>(left: L, right: R, key: keyof MetadataProps): boolean {
+        return this.readFrom(left)[key] === this.readFrom(right)[key];
+    }
 
+    static isOk(value: unknown): value is OkImpl<any> {
+        if (this.hasMetadata(value)) {
+            return this.readFrom(value).type === MetadataType.Ok;
+        }
+        return false;
+    };
+
+    static isErr(value: unknown): value is ErrImpl<any> {
+        if (this.hasMetadata(value)) {
+            return this.readFrom(value).type === MetadataType.Err;
+        }
+        return false;
+    };
+
+    static isResult(value: unknown): value is ResultImpl {
+        if (this.hasMetadata(value)) {
+            return this.isOk(value) || this.isErr(value);
+        }
+        return false;
+    };
+
+    static isSome(value: unknown): value is SomeImpl<any> {
+        if (this.hasMetadata(value)) {
+            return this.readFrom(value).type === MetadataType.Some;
+        }
+        return false;
+    };
+
+    static isNone(value: unknown): value is NoneImpl {
+        if (this.hasMetadata(value)) {
+            return this.readFrom(value).type === MetadataType.None;
+        }
+        return false;
+    };
+
+    static isOption(value: unknown): value is OptionImpl {
+        if (this.hasMetadata(value)) {
+            return this.isSome(value) || this.isNone(value);
+        }
+        return false;
+    };
+}

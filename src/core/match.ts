@@ -1,7 +1,7 @@
-import { isValueOption, Option, SomeImpl } from './option';
+import { Option, SomeImpl } from './option';
 import { _, EmptyPlaceholder, isPresent } from './utils';
-import { compareMetadataByKey, hasMetadata } from './metadata';
-import { isValueResult, Result, ResultImpl } from './result';
+import { Result, ResultImpl } from './result';
+import { Metadata } from './metadata';
 
 type Fn<T> = (arg: T) => unknown;
 
@@ -20,11 +20,11 @@ class Case<T, P = any> {
     case(compareValue: any, result: any): Case<any> {
         if (isPresent(this.result)) {
             return this;
-        } else if (hasMetadata(compareValue) && hasMetadata(this.value)) {
-            if (compareMetadataByKey(compareValue, this.value, 'type')) {
+        } else if (Metadata.hasMetadata(compareValue) && Metadata.hasMetadata(this.value)) {
+            if (Metadata.compareWithByKey(compareValue, this.value, 'type')) {
                 if (
-                    (isValueOption(compareValue) && isValueOption(this.value)) ||
-                    (isValueResult(compareValue) && isValueResult(this.value))
+                    (Metadata.isOption(compareValue) && Metadata.isOption(this.value)) ||
+                    (Metadata.isResult(compareValue) && Metadata.isResult(this.value))
                 ) {
                     const cmpInternalValue = readInternalValue(compareValue);
                     const matchValueInternalValue = readInternalValue(this.value);

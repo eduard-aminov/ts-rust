@@ -1,29 +1,8 @@
-import { hasMetadata, Metadata, OptionTypeMetadata, readMetadata, setMetadata } from './metadata';
+import { DefineMetadata, Metadata, MetadataType } from './metadata';
 import { bool } from './primitives';
 import { _, isPresent } from './utils';
 import { match } from './match';
 import { Err, Ok, Result } from './result';
-
-export const isValueSome = (value: unknown): value is SomeImpl<any> => {
-    if (hasMetadata(value)) {
-        return readMetadata(value).type === OptionTypeMetadata.Some;
-    }
-    return false;
-};
-
-export const isValueNone = (value: unknown): value is NoneImpl => {
-    if (hasMetadata(value)) {
-        return readMetadata(value).type === OptionTypeMetadata.None;
-    }
-    return false;
-};
-
-export const isValueOption = (value: unknown): value is OptionImpl => {
-    if (hasMetadata(value)) {
-        return isValueSome(value) || isValueNone(value);
-    }
-    return false;
-};
 
 export class OptionImpl<T = any> {
     constructor(
@@ -204,13 +183,13 @@ export class OptionImpl<T = any> {
 
     private set value(value: T) {
         this._value = value;
-        const type = !isPresent(value) ? OptionTypeMetadata.None : OptionTypeMetadata.Some;
-        setMetadata(this.constructor, {type});
+        const type = !isPresent(value) ? MetadataType.None : MetadataType.Some;
+        Metadata.setMetadata(this, {type});
     }
 }
 
-@Metadata({
-    type: OptionTypeMetadata.Some,
+@DefineMetadata({
+    type: MetadataType.Some,
 })
 export class SomeImpl<T> extends OptionImpl<T> {
     constructor(value: T) {
@@ -218,8 +197,8 @@ export class SomeImpl<T> extends OptionImpl<T> {
     }
 }
 
-@Metadata({
-    type: OptionTypeMetadata.None,
+@DefineMetadata({
+    type: MetadataType.None,
 })
 export class NoneImpl extends OptionImpl {
     constructor() {

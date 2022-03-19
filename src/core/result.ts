@@ -2,28 +2,7 @@ import { _ } from './utils';
 import { match } from './match';
 import { bool } from './primitives';
 import { None, Option, Some } from './option';
-import { hasMetadata, Metadata, readMetadata, ResultTypeMetadata } from './metadata';
-
-export const isValueOk = (value: unknown): value is OkImpl<any> => {
-    if (hasMetadata(value)) {
-        return readMetadata(value).type === ResultTypeMetadata.Ok;
-    }
-    return false;
-};
-
-export const isValueErr = (value: unknown): value is ErrImpl<any> => {
-    if (hasMetadata(value)) {
-        return readMetadata(value).type === ResultTypeMetadata.Err;
-    }
-    return false;
-};
-
-export const isValueResult = (value: unknown): value is ResultImpl => {
-    if (hasMetadata(value)) {
-        return isValueOk(value) || isValueErr(value);
-    }
-    return false;
-};
+import { DefineMetadata, MetadataType } from './metadata';
 
 export interface OkCtor {
     new<T>(value: T): Result<T>;
@@ -73,8 +52,8 @@ export class ResultImpl<T = any, E = any> {
     }
 }
 
-@Metadata({
-    type: ResultTypeMetadata.Ok
+@DefineMetadata({
+    type: MetadataType.Ok
 })
 export class OkImpl<T> extends ResultImpl<T> {
     constructor(value: T) {
@@ -82,8 +61,8 @@ export class OkImpl<T> extends ResultImpl<T> {
     }
 }
 
-@Metadata({
-    type: ResultTypeMetadata.Err
+@DefineMetadata({
+    type: MetadataType.Err
 })
 export class ErrImpl<E> extends ResultImpl<any, E> {
     constructor(value: E) {

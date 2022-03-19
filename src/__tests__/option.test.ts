@@ -211,10 +211,10 @@ describe('Option', () => {
         const z = None();
         const w = z.take();
 
-        expect(x).toEqual(None());
-        expect(y).toEqual(Some(2));
-        expect(z).toEqual(None());
-        expect(w).toEqual(None());
+        expect(x.isNone()).toEqual(bool(true));
+        expect(y.unwrap()).toEqual(2);
+        expect(z.isNone()).toEqual(bool(true));
+        expect(w.isNone()).toEqual(bool(true));
     });
 
     test('replace', () => {
@@ -223,10 +223,10 @@ describe('Option', () => {
         const z = None();
         const w = z.replace(3);
 
-        expect(x).toEqual(Some(5));
-        expect(y).toEqual(Some(2));
-        expect(z).toEqual(Some(3));
-        expect(w).toEqual(None());
+        expect(x.unwrap()).toEqual(5);
+        expect(y.unwrap()).toEqual(2);
+        expect(z.unwrap()).toEqual(3);
+        expect(w.isNone()).toEqual(bool(true));
     });
 
     test('zip', () => {
