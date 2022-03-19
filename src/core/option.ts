@@ -1,25 +1,33 @@
-import { hasMetadata, Metadata, OptionTypeMetadata, readMetadata } from './metadata';
+import { hasMetadata, Metadata, OptionTypeMetadata, readMetadata, setMetadata } from './metadata';
 import { bool } from './primitives';
 import { _, isPresent } from './utils';
 import { match } from './match';
 import { Err, Ok, Result } from './result';
 
-export interface SomeCtor {
-    new<T>(value: T): Option<T>;
+export const isValueSome = (value: unknown): value is SomeImpl<any> => {
+    if (hasMetadata(value)) {
+        return readMetadata(value).type === OptionTypeMetadata.Some;
+    }
+    return false;
+};
 
-    <T>(value: T): Option<T>;
-}
+export const isValueNone = (value: unknown): value is NoneImpl => {
+    if (hasMetadata(value)) {
+        return readMetadata(value).type === OptionTypeMetadata.None;
+    }
+    return false;
+};
 
-export interface NoneCtor {
-    new(): Option<any>;
-
-    (): Option<any>;
-}
+export const isValueOption = (value: unknown): value is OptionImpl => {
+    if (hasMetadata(value)) {
+        return isValueSome(value) || isValueNone(value);
+    }
+    return false;
+};
 
 export class OptionImpl<T = any> {
     constructor(
         protected _value: T,
-        protected __metadata__: Metadata,
     ) {
     }
 
@@ -45,10 +53,15 @@ export class OptionImpl<T = any> {
     }
 
     unwrap(): T {
-        return match(this)
-            .case(Some(_), x => x)
-            .case(None(), () => { throw new Error('called `Option.unwrap()` on a `None` value'); })
-            .default();
+        if (isPresent(this._value)) {
+            return this._value;
+        } else {
+            throw new Error('called `Option.unwrap()` on a `None` value');
+        }
+        // return match(this)
+        //     .case(Some(_), x => x)
+        //     .case(None(), () => { throw new Error('called `Option.unwrap()` on a `None` value'); })
+        //     .default();
     }
 
     unwrapOr(defaultValue: T): T {
@@ -124,7 +137,7 @@ export class OptionImpl<T = any> {
             .default(fn());
     }
 
-    filter(predicate: (arg: T) => boolean): Option<T> {
+    filter(predicate: (arg: T) => boolean): Option<any> {
         if (this.isNone().value) {
             return None();
         }
@@ -136,53 +149,38 @@ export class OptionImpl<T = any> {
 
     insert(value: T): T {
         if (isPresent(value)) {
-            this._value = value;
-            this.__metadata__ = {
-                type: OptionTypeMetadata.Some,
-            };
+            this.value = value;
         }
         return this._value;
     }
 
     getOrInsert(value: T): T {
         if (isPresent(value) && this.isNone().value) {
-            this._value = value;
-            this.__metadata__ = {
-                type: OptionTypeMetadata.Some,
-            };
+            this.value = value;
         }
         return this._value;
     }
 
     getOrInsertWith(fn: () => T): T {
         if (this.isNone().value) {
-            this._value = fn();
-            this.__metadata__ = {
-                type: OptionTypeMetadata.Some,
-            };
+            this.value = fn();
         }
         return this._value;
     }
 
-    take(): Option<T> {
+    take(): Option<any> {
         if (this.isSome().value) {
             const option = Some(this._value);
-            this._value = null as any;
-            this.__metadata__ = {
-                type: OptionTypeMetadata.None,
-            };
+            this.value = null as any;
             return option;
         }
         return this;
     }
 
-    replace(value: T): Option<T> {
+    replace(value: T): Option<any> {
         if (isPresent(value)) {
             const oldValue = this._value;
-            this._value = value;
-            this.__metadata__ = {
-                type: OptionTypeMetadata.Some,
-            };
+            this.value = value;
             if (isPresent(oldValue)) {
                 return Some(oldValue);
             }
@@ -190,36 +188,60 @@ export class OptionImpl<T = any> {
         return None();
     }
 
-    zip<U>(other: Option<U>): Option<[T, U]> {
+    zip<U>(other: OptionImpl<U>): OptionImpl<[T, U]> {
         if (this.isSome().bitand(other.isSome()).value) {
             return Some([this.unwrap(), other.unwrap()]);
         }
         return None();
     }
 
-    zipWith<U, R>(other: Option<U>, fn: (arg1: T, arg2: U) => R): Option<R> {
+    zipWith<U, R>(other: OptionImpl<U>, fn: (arg1: T, arg2: U) => R): Option<R> {
         if (this.isSome().bitand(other.isSome()).value) {
             return Some(fn(this.unwrap(), other.unwrap()));
         }
         return None();
     }
+
+    private set value(value: T) {
+        this._value = value;
+        const type = !isPresent(value) ? OptionTypeMetadata.None : OptionTypeMetadata.Some;
+        setMetadata(this.constructor, {type});
+    }
 }
 
+@Metadata({
+    type: OptionTypeMetadata.Some,
+})
 export class SomeImpl<T> extends OptionImpl<T> {
     constructor(value: T) {
-        super(value, {type: OptionTypeMetadata.Some});
+        super(value);
     }
 }
 
+@Metadata({
+    type: OptionTypeMetadata.None,
+})
 export class NoneImpl extends OptionImpl {
     constructor() {
-        super(null, {type: OptionTypeMetadata.None});
+        super(null);
     }
+}
+
+export interface SomeCtor {
+    new<T>(value: T): OptionImpl<T>;
+
+    <T>(value: T): OptionImpl<T>;
+}
+
+export interface NoneCtor {
+    new(): OptionImpl;
+
+    (): OptionImpl;
 }
 
 export type Option<T> = OptionImpl<T>;
 
-function factory<T>(value: T): Option<T>;
+function factory<T>(value: T): OptionImpl<T>;
 function factory<T, E>(value?: any): any {
     if (!isPresent(value)) {
         return new NoneImpl();
@@ -230,24 +252,3 @@ function factory<T, E>(value?: any): any {
 
 export const Some = factory as SomeCtor;
 export const None = factory as NoneCtor;
-
-export const isValueSome = (value: unknown): value is SomeImpl<any> => {
-    if (hasMetadata(value)) {
-        return readMetadata(value).type === OptionTypeMetadata.Some;
-    }
-    return false;
-};
-
-export const isValueNone = (value: unknown): value is NoneImpl => {
-    if (hasMetadata(value)) {
-        return readMetadata(value).type === OptionTypeMetadata.None;
-    }
-    return false;
-};
-
-export const isValueOption = (value: unknown): value is OptionImpl => {
-    if (hasMetadata(value)) {
-        return isValueSome(value) || isValueNone(value);
-    }
-    return false;
-};

@@ -1,4 +1,4 @@
-import { None, Option, Some } from '../option';
+import { None, Option, OptionImpl, Some } from '../option';
 import { Default } from '../default';
 import { BitAnd, BitOr, BitXor, Not } from '../ops';
 import { Equal, Greater, Less, Ord, Ordering } from '../cmp';
@@ -20,7 +20,7 @@ class BoolImpl implements Default<BoolImpl>,
         public value: boolean,
     ) {}
 
-    thenSome<T>(value: T): Option<T> {
+    thenSome<T>(value: T): OptionImpl<T> {
         if (this.value) {
             return Some(value);
         }

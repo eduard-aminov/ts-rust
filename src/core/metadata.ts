@@ -1,6 +1,14 @@
 import { isPresent } from './utils';
 
-export interface Metadata {
+type Ctor<T = any> = new(...args: T[]) => any;
+
+export function Metadata(metadata: Metadata): (ctor: Ctor) => void {
+    return function (ctor: Ctor): void {
+        ctor.prototype.__metadata__ = metadata;
+    };
+}
+
+interface Metadata {
     type: OptionTypeMetadata | ResultTypeMetadata;
 }
 
@@ -22,9 +30,14 @@ export const readMetadata = <T>(from: T): Metadata => {
     if (!hasMetadata(from)) {
         throw new Error('Cannot read metadata');
     }
-    return (from as any).__metadata__;
+    return (from as any)?.__metadata__;
 };
 
 export const compareMetadataByKey = (left: any, right: any, key: keyof Metadata): boolean => {
     return readMetadata(left)[key] === readMetadata(right)[key];
 };
+
+export const setMetadata = <T>(instance: T, metadata: Metadata) => {
+    (instance as any).__metadata__ = metadata;
+};
+

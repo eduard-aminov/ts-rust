@@ -4,6 +4,27 @@ import { bool } from './primitives';
 import { None, Option, Some } from './option';
 import { hasMetadata, Metadata, readMetadata, ResultTypeMetadata } from './metadata';
 
+export const isValueOk = (value: unknown): value is OkImpl<any> => {
+    if (hasMetadata(value)) {
+        return readMetadata(value).type === ResultTypeMetadata.Ok;
+    }
+    return false;
+};
+
+export const isValueErr = (value: unknown): value is ErrImpl<any> => {
+    if (hasMetadata(value)) {
+        return readMetadata(value).type === ResultTypeMetadata.Err;
+    }
+    return false;
+};
+
+export const isValueResult = (value: unknown): value is ResultImpl => {
+    if (hasMetadata(value)) {
+        return isValueOk(value) || isValueErr(value);
+    }
+    return false;
+};
+
 export interface OkCtor {
     new<T>(value: T): Result<T>;
 
@@ -19,7 +40,6 @@ export interface ErrCtor {
 export class ResultImpl<T = any, E = any> {
     constructor(
         private _value: T | E,
-        private __metadata__: Metadata,
     ) {
     }
 
@@ -53,15 +73,21 @@ export class ResultImpl<T = any, E = any> {
     }
 }
 
+@Metadata({
+    type: ResultTypeMetadata.Ok
+})
 export class OkImpl<T> extends ResultImpl<T> {
     constructor(value: T) {
-        super(value, {type: ResultTypeMetadata.Ok});
+        super(value);
     }
 }
 
+@Metadata({
+    type: ResultTypeMetadata.Err
+})
 export class ErrImpl<E> extends ResultImpl<any, E> {
     constructor(value: E) {
-        super(value, {type: ResultTypeMetadata.Err});
+        super(value);
     }
 }
 
@@ -77,24 +103,3 @@ function errFactory<T>(value: T): ErrImpl<T> {
 
 export const Ok = okFactory as OkCtor;
 export const Err = errFactory as ErrCtor;
-
-export const isValueOk = (value: unknown): value is OkImpl<any> => {
-    if (hasMetadata(value)) {
-        return readMetadata(value).type === ResultTypeMetadata.Ok;
-    }
-    return false;
-};
-
-export const isValueErr = (value: unknown): value is ErrImpl<any> => {
-    if (hasMetadata(value)) {
-        return readMetadata(value).type === ResultTypeMetadata.Err;
-    }
-    return false;
-};
-
-export const isValueResult = (value: unknown): value is ResultImpl => {
-    if (hasMetadata(value)) {
-        return isValueOk(value) || isValueErr(value);
-    }
-    return false;
-};

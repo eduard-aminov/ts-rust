@@ -1,4 +1,4 @@
-import { bool, Err, None, Ok, Option, Some } from '../core';
+import { bool, Err, None, Ok, Option, Result, Some } from '../core';
 
 describe('Option', () => {
 
