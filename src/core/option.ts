@@ -32,15 +32,10 @@ export class OptionImpl<T = any> {
     }
 
     unwrap(): T {
-        if (isPresent(this._value)) {
-            return this._value;
-        } else {
-            throw new Error('called `Option.unwrap()` on a `None` value');
-        }
-        // return match(this)
-        //     .case(Some(_), x => x)
-        //     .case(None(), () => { throw new Error('called `Option.unwrap()` on a `None` value'); })
-        //     .default();
+        return match(this)
+            .case(Some(_), x => x)
+            .case(None(), () => { throw new Error('called `Option.unwrap()` on a `None` value'); })
+            .default();
     }
 
     unwrapOr(defaultValue: T): T {
