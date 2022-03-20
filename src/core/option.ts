@@ -176,6 +176,12 @@ export class OptionImpl<T = any> {
         return None();
     }
 
+    flatten(): T extends OptionImpl ? T: never {
+        return match(this)
+            .case(Some(_), x => x)
+            .default(None());
+    }
+
     private set value(value: T) {
         this._value = value;
         const type = !isPresent(value) ? MetadataType.None : MetadataType.Some;
@@ -215,8 +221,7 @@ export interface NoneCtor {
 
 export type Option<T> = OptionImpl<T>;
 
-function factory<T>(value: T): OptionImpl<T>;
-function factory<T, E>(value?: any): any {
+function factory<T>(value: T): OptionImpl<T> {
     if (!isPresent(value)) {
         return new NoneImpl();
     } else {

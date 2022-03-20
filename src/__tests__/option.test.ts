@@ -255,4 +255,12 @@ describe('Option', () => {
         expect(x.zipWith(y, mapToPoint)).toEqual(expectedValue);
         expect(x.zipWith(None(), mapToPoint)).toEqual(None());
     });
+
+    test('flatten', () => {
+        const x = Some(Some(Some(5)));
+        const y = None();
+
+        expect(x.flatten().flatten()).toEqual(Some(5))
+        expect(y.flatten()).toEqual(None())
+    })
 });
