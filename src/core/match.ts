@@ -26,7 +26,12 @@ class Case<T, P = any> {
                     (Metadata.isOption(compareValue) && Metadata.isOption(this.value)) ||
                     (Metadata.isResult(compareValue) && Metadata.isResult(this.value))
                 ) {
-                    const cmpInternalValue = readInternalValue(compareValue);
+                    let cmpInternalValue = readInternalValue(compareValue);
+
+                    while(Metadata.isSome(cmpInternalValue) || Metadata.isResult(cmpInternalValue)) {
+                        cmpInternalValue = readInternalValue(cmpInternalValue);
+                    }
+
                     const matchValueInternalValue = readInternalValue(this.value);
                     if (cmpInternalValue === _ || matchValueInternalValue === cmpInternalValue) {
                         return handleResultAndGetCase(matchValueInternalValue, result);
@@ -48,17 +53,23 @@ class Case<T, P = any> {
 }
 
 function handleResultAndGetCase<T>(value: T, result: any): Case<T> {
-    if (result instanceof Function) {
-        return new Case(value, result(value));
+    let matchValue = value;
+
+    if (Metadata.isResult(matchValue)) {
+        matchValue = readInternalValue(matchValue) as T;
     }
-    return new Case(value, result);
+
+    if (result instanceof Function) {
+        return new Case(matchValue, result(matchValue));
+    }
+    return new Case(matchValue, result);
 }
 
 function readInternalValue(value: any): unknown {
     return value._value;
 }
 
-export function match<T>(value: Option<T>): Case<Option<T> | SomeImpl<EmptyPlaceholder>, T>;
+export function match<T>(value: Option<T>): Case<Option<T> | SomeImpl<EmptyPlaceholder> | SomeImpl<ResultImpl<EmptyPlaceholder>>, T>;
 export function match<T, E>(value: Result<T, E>): Case<Result<T, E> | ResultImpl<EmptyPlaceholder>, T | E>;
 export function match<T>(value: T): Case<T, T>;
 export function match<T>(value: any): Case<any> {

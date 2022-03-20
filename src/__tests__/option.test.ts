@@ -260,7 +260,14 @@ describe('Option', () => {
         const x = Some(Some(Some(5)));
         const y = None();
 
-        expect(x.flatten().flatten()).toEqual(Some(5))
-        expect(y.flatten()).toEqual(None())
-    })
+        expect(x.flatten().flatten()).toEqual(Some(5));
+        expect(y.flatten()).toEqual(None());
+    });
+
+    test('transpose', () => {
+        const x: Result<Option<number>, string> = Ok(Some(5));
+        const y: Option<Result<number, string>> = Some(Ok(5));
+
+        expect(y.transpose()).toEqual(x);
+    });
 });

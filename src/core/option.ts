@@ -2,7 +2,7 @@ import { DefineMetadata, Metadata, MetadataType } from './metadata';
 import { bool } from './primitives';
 import { _, isPresent } from './utils';
 import { match } from './match';
-import { Err, Ok, Result } from './result';
+import { Err, Ok, Result, ResultImpl } from './result';
 
 export class OptionImpl<T = any> {
     constructor(
@@ -180,6 +180,13 @@ export class OptionImpl<T = any> {
         return match(this)
             .case(Some(_), x => x)
             .default(None());
+    }
+
+    transpose(): ResultImpl {
+        return match(this)
+            .case(Some(Ok(_)), x => Ok(Some(x)))
+            .case(Some(Err(_)), e => Err(e))
+            .default(Ok(None()));
     }
 
     private set value(value: T) {
