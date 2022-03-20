@@ -1,8 +1,9 @@
 import { DefineMetadata, Metadata, MetadataType } from './metadata';
 import { bool } from './primitives';
-import { _, isPresent } from './utils';
+import { _, isPresent, withStaticProperties } from './utils';
 import { match } from './match';
 import { Err, Ok, Result, ResultImpl } from './result';
+import { Default } from './default';
 
 export class OptionImpl<T = any> {
     constructor(
@@ -200,6 +201,11 @@ export class OptionImpl<T = any> {
     type: MetadataType.Some,
 })
 export class SomeImpl<T> extends OptionImpl<T> {
+
+    static default(): Option<any> {
+        return None();
+    }
+
     constructor(value: T) {
         super(value);
     }
@@ -214,13 +220,13 @@ export class NoneImpl extends OptionImpl {
     }
 }
 
-export interface SomeCtor {
+export interface SomeCtor extends Default<Option<any>> {
     new<T>(value: T): OptionImpl<T>;
 
     <T>(value: T): OptionImpl<T>;
 }
 
-export interface NoneCtor {
+export interface NoneCtor extends Default<Option<any>> {
     new(): OptionImpl;
 
     (): OptionImpl;
@@ -228,13 +234,24 @@ export interface NoneCtor {
 
 export type Option<T> = OptionImpl<T>;
 
-function factory<T>(value: T): OptionImpl<T> {
-    if (!isPresent(value)) {
-        return new NoneImpl();
-    } else {
-        return new SomeImpl<T>(value);
-    }
-}
 
-export const Some = factory as SomeCtor;
-export const None = factory as NoneCtor;
+export const someFactory = withStaticProperties(
+    <T>(value: T): Option<T> => new SomeImpl<T>(value),
+    {
+        default(): Option<any> {
+            return None();
+        }
+    }
+);
+
+export const noneFactory = withStaticProperties(
+    (): Option<any> => new NoneImpl(),
+    {
+        default(): Option<any> {
+            return None();
+        }
+    }
+);
+
+export const Some = someFactory as SomeCtor;
+export const None = noneFactory as NoneCtor;

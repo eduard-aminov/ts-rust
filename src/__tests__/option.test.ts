@@ -270,4 +270,12 @@ describe('Option', () => {
 
         expect(y.transpose()).toEqual(x);
     });
+
+    test('default', () => {
+        const x = Some.default();
+        const y = None.default();
+
+        expect(x).toEqual(None());
+        expect(y).toEqual(None());
+    });
 });
